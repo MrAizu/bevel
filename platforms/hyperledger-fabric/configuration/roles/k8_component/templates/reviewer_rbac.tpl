@@ -1,15 +1,4 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: pod-manager-role
-rules:
-- apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "watch", "list", "create"]
-
----
-
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ component_name }}-role-tokenreview-binding
@@ -26,22 +15,6 @@ subjects:
   name: vault-auth
   namespace: {{ component_name }}
 
----
 
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: {{ component_name }}-pod-manager-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: pod-manager-role
-subjects:
-- kind: ServiceAccount
-  name: vault-reviewer
-  namespace: {{ component_name }}
-- kind: ServiceAccount
-  name: vault-auth
-  namespace: {{ component_name }}
 
 
