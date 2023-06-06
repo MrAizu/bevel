@@ -203,11 +203,9 @@ spec:
                 validateVaultResponse ${response_status};
               fi;
           volumeMounts:
-          # {{ if .Values.vault.tls  }}
             - name: vaultca
               mountPath: "/etc/ssl/certs/"
               readOnly: true
-          # {{ end }}
             - name: policies-config-orderer
               mountPath: /policies/policies-config-orderer.json.tmpl
               subPath: policies-config-orderer.json.tmpl
