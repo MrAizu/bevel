@@ -32,14 +32,12 @@ spec:
         - name: {{ $.Values.vault.imagesecretname }}
       serviceAccountName: {{ $.Values.vault.reviewer_service }}
       volumes:
-      # {{ if .Values.vault.tls  }}
       - name: vaultca
         secret:
-          secretName: ca.crt
-          # items:
-          # - key: ca.crt.pem
-          #   path: ca-certificates.crt
-      # {{ end }}
+          secretName: vaultca
+          items:
+          - key: ca.crt
+            path: ca.crt
       - name: policies
         emptyDir:
           medium: Memory
@@ -207,8 +205,7 @@ spec:
           volumeMounts:
           # {{ if .Values.vault.tls  }}
             - name: vaultca
-              mountPath: "/etc/ssl/certs/ca.crt"
-              subPath: ca.crt
+              mountPath: "/etc/ssl/certs/"
               readOnly: true
           # {{ end }}
             - name: policies-config-orderer
