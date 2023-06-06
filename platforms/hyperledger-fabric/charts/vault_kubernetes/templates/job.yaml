@@ -32,14 +32,14 @@ spec:
         - name: {{ $.Values.vault.imagesecretname }}
       serviceAccountName: {{ $.Values.vault.reviewer_service }}
       volumes:
-      {{ if .Values.vault.tls  }}
+      # {{ if .Values.vault.tls  }}
       - name: vaultca
         secret:
-          secretName: {{ $.Values.vault.tls }}
-          items:
-          - key: ca.crt.pem
-            path: ca-certificates.crt
-      {{ end }}
+          secretName: ca.crt
+          # items:
+          # - key: ca.crt.pem
+          #   path: ca-certificates.crt
+      # {{ end }}
       - name: policies
         emptyDir:
           medium: Memory
@@ -110,12 +110,12 @@ spec:
                 --data '{"type": "kubernetes"}' \
                 ${VAULT_ADDR}/v1/sys/auth/${KUBERNETES_AUTH_PATH}
 
-                while IFS= read -r line
-                do
-                  echo "$line\n"
-                done < /var/run/secrets/kubernetes.io/serviceaccount/ca.crt > ca_formatted.txt
+                # while IFS= read -r line
+                # do
+                #   echo "$line\n"
+                # done < /var/run/secrets/kubernetes.io/serviceaccount/ca.crt > ca_formatted.txt
 
-                KUBE_SA_CRT_ONELINE=$(cat ca_formatted.txt)
+                KUBE_SA_CRT_ONELINE=$(cat /etc/ssl/certs/ca.crt)
                 export REVIEWER_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token);
 
                 # This echo get the certificate for the cluster
@@ -205,11 +205,12 @@ spec:
                 validateVaultResponse ${response_status};
               fi;
           volumeMounts:
-          {{ if .Values.vault.tls  }}
+          # {{ if .Values.vault.tls  }}
             - name: vaultca
-              mountPath: "/etc/ssl/certs/"
+              mountPath: "/etc/ssl/certs/ca.crt"
+              subPath: ca.crt
               readOnly: true
-          {{ end }}
+          # {{ end }}
             - name: policies-config-orderer
               mountPath: /policies/policies-config-orderer.json.tmpl
               subPath: policies-config-orderer.json.tmpl
